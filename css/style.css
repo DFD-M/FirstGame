@@ -1,0 +1,22 @@
+body{
+    background-color: black;
+}
+
+#timer{
+    color:darkorange;
+    background-color: black;
+}
+.live{
+    width: 300px;
+    height: 30px;
+    border: 1px solid aqua;    
+}
+.hp{
+    width: 50px;
+    background: red;
+    height: 30px;
+}
+
+p{
+    color: yellowgreen;
+}
