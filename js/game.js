@@ -12,6 +12,8 @@ var gravity=0.5
 var n=0
 var flag=0;
 
+
+
 setInterval(gotimer,1000);
 function gotimer(){
    
@@ -20,7 +22,7 @@ function gotimer(){
         sec=0;
         min++;
     }
-    if(sec>10){
+    if(sec>=10){
       return  timer.innerHTML="Таймер: 0"+min+":"+sec;  
     }
     else{
@@ -30,7 +32,7 @@ function gotimer(){
    
 }
 
-var character=new Image(90,75);
+var character=new Image();
 var key = new Image();
 var bg = new Image();
 var soil = new Image();
@@ -38,37 +40,48 @@ var enemy = new Image();
 var block1= new Image();
 var block2= new Image();
 
-
-
 //connect image
-character.src="Photos/sprite (13).png"
+character.src="photos/sprite (3).png"
 key.src="Photos/ket.png"
 bg.src="Photos/2_21.png"
 // enemy.src=""
 block1.src="Photos/tileset1.png"
 block2.src="Photos/tileset1.png"
-// characterPlayer={
-//     x:15,
-//     y:613,
-//     x_velocity:0,
-//     y_velocity:0,
-//     jumping:true,
+
+
+
+
+
+
+const player={
     
+    x:15,
+    y:613,
+    width:33,
+    height:32,
+    frameX:0,
+    frameY:0,
+    speed:9,
+    size:10,
+    jumping:false,
+    x_velocity:0,
+    y_velocity:0,   
+};
 
 
-// };
-
+const blocks={
+    x:0,
+    y:0,
+    width:0,
+    height:0,
+    frameX:0,
+    frameY:0,
+    
+}
 
 
 document.addEventListener('keydown',function (e){if(KeyDown(e));});
 
-function moveUp(){
-    
-    yPos-=25
-    
-    
-    
-}
 
 
 
@@ -76,15 +89,31 @@ function KeyDown(e)
 {
     switch(e.keyCode){
         case 37: //left
-            xPos-=25;
+            player.x_velocity-=15;
+            if(player.frameX<2){
+                player.frameX++;
+            }
+            else{
+                player.frameX=0
+            };
             break;
-        case 39:
-            xPos+=25
+        case 39://right
+            player.x_velocity+=15;
+            if(player.frameX<2 && player.frameY==0){
+                player.frameX++;
+            }
+            else{
+                player.frameY=0;
+                player.frameX=0;
+            };
             break;
-        case 38:
-            setTimeout(moveUp,100)
-
-            // yPos-=25;
+        case 38://up
+            // setTimeout(moveUp,100)
+            if(player.jumping==false){
+                player.y_velocity-=25;
+                player.jumping=true;
+            }
+            // player.y-=25;
 
             break;
         
@@ -95,15 +124,12 @@ function KeyDown(e)
 
 }
 
-function move(){
-    yPos-=25
-    
-}
+
 
 var block=[]
 block[0]={
     x:cvs.width,
-    y:0
+    y:590
 
 }
 
@@ -111,11 +137,12 @@ block[0]={
 // var t=DataView()
 
 function draw(){
-    ctx.drawImage(bg,0,0,1280,720);
+    ctx.drawImage(bg,0,0,canvas.width,canvas.height);
     ctx.drawImage(key,55,590,99,99)
-    ctx.drawImage(character,xPos,yPos,90,75);
-    // ctx.drawImage(block1,-50,630)+ctx.drawImage(block1,Xpos+block1.width,cvs.height-90);
-    // ctx.drawImage(block1,block1.width,block1.height)
+    ctx.drawImage(character,player.width*player.frameX,player.height*player.frameY,player.width,player.height,player.x,player.y,player.width,player.height);
+    // animate();
+    // update();
+    
     for(var i=0;i<block.length;i++){
         ctx.drawImage(block1,block[i].x,block[i].y)
         block[i].x--;
@@ -126,36 +153,33 @@ function draw(){
             })
         
         }
-        
-        // if(block[i].x<500||){n++}
+
+      
     }
     
-    
-    // for(var i=0;i<block.length;i++){
-    //     ctx.drawImage(block1,block[i].x,block[i].y);
-    //     console.log(block[i].x)
-        // ctx.drawImage(block2,block[i].x,block[i].y+gap+block1.height);
-        // block[i].x--;
-        // if(block[i].x==15){// поменять на значение после первого блока перса 
-        //     block.push({
-        //         x:cvs.width,
-        //         y:Math.floor(Math.random()*block1)
-                
-        //     },console.log(x),console.log(y));
-        // }console.log(block[i])
-
-    
-
-
-    // if(yPos>630||xPos<-50||xPos>canvas.width-90){
-    //     location.reload();
+    if (player.x < player.width/3|| player.x > 1280 - player.width/3) {
+        player.x=200;
+    }
+   
       
   
-    if(yPos>=613){
-        gravity=0
-    }else{
-        gravity=2
+    player.y_velocity+=1.5;//gravity
+    player.x+=player.x_velocity;
+    player.y+=player.y_velocity;
+    player.x_velocity*=0.3;
+    player.y_velocity*=0.9;
+
+    if(player.y>613){
+        player.jumping=false;
+        player.y=613;
+        player.y_velocity=0;
     }
+
+    // if(yPos>=613){
+    //     gravity=0
+    // }else{
+    //     gravity=2
+    // }
 
    
     yPos+=gravity;
